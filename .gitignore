@@ -1,0 +1,15 @@
+# Common
+*.pyc
+*.pyo
+*.swp
+*.swo
+*.orig
+*.egg-info
+.idea
+
+# Project specific
+/pip-log.txt
+/var/
+/.cache/
+/var/
+/.pytest_cache/
