@@ -13,3 +13,4 @@
 /.cache/
 /var/
 /.pytest_cache/
+/dist/

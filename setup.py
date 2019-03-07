@@ -3,6 +3,9 @@ import os
 
 ROOT = os.path.dirname(os.path.realpath(__file__))
 
+with open(os.path.join(ROOT, 'README.md')) as inp:
+    readme_content = inp.read()
+
 setup(
     name = 'decaptcher',
     version = '0.0.1',
@@ -12,7 +15,8 @@ setup(
     maintainer_email='lorien@lorien.name',
     url='https://github.com/lorien/decaptcher',
     description = 'Universal interface to multiple anti-captcha services',
-    #long_description = open(os.path.join(ROOT, 'README.rst')).read(),
+    long_description = readme_content,
+    long_description_content_type='text/markdown',
     packages = find_packages(exclude=['test']),
     download_url='https://github.com/lorien/decaptcher/releases',
     license = "MIT",
