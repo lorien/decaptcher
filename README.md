@@ -45,6 +45,7 @@ print(solver.process(task_options={
     'lang': 'en',
     'textcaptcha': 'Name of first day of week',
 }))
+```
 
 ### Getting captcha ID along the solution
 
