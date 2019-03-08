@@ -41,7 +41,11 @@ class CommonBackend(BaseServiceBackend):
     def parse_task_response(self, res):
         if res['code'] == 200:
             body = res['body'].decode('utf-8')
-            if body.startswith('OK|'):
+            if body == 'OK_REPORT_RECORDED':
+                return {
+                    'task_id': None,
+                }
+            elif body.startswith('OK|'):
                 return {
                     'task_id': body.split('|', 1)[1]
                 }
