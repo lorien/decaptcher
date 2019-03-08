@@ -24,7 +24,7 @@ with open('captcha.png') as inp:
 with open('captcha.png') as inp:
     print(solver.process(inp))
 # You can pass extra parameters (described in 2captcha documentation)
-# using task_options arguments, for example:
+# using task_options arguments:
 print(solver.process_file('captcha.png', task_options={
     'regsense': 1,
     'min_len': 4,
