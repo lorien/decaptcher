@@ -4,6 +4,7 @@ __all__ = [
     'ServiceNotAvailable',
     'ZeroBalance',
     'ResultNotReady',
+    'InvalidServiceResponse',
 ]
 
 
@@ -16,6 +17,10 @@ class RemoteServiceError(DecaptcherError):
 
 
 class ServiceNotAvailable(RemoteServiceError):
+    pass
+
+
+class InvalidServiceResponse(RemoteServiceError):
     pass
 
 
