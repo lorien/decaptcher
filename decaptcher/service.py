@@ -5,16 +5,25 @@ import socket
 import time
 import logging
 from datetime import timedelta
+try:
+    import io
+except ImportError:
+    pass
+import six
 
 from .error import (
     ServiceNotAvailable, ResultNotReady
 )
 from .backend.rucaptcha import RucaptchaBackend
+from .backend.twocaptcha import TwocaptchaBackend
+from .backend.antigate import AntigateBackend
 from .backend.browser import BrowserBackend
 
 
 BACKEND_ALIAS = {
     'rucaptcha': RucaptchaBackend,
+    'twocaptcha': TwocaptchaBackend,
+    'antigate': AntigateBackend,
     'browser': BrowserBackend,
 }
 logger = logging.getLogger('decaptcher.service')
@@ -72,7 +81,12 @@ class Service(object):
                 task_options=None,
                 #result_options=None,
         ):
-        if isinstance(data, file):
+
+        if six.PY2:
+            is_file = isinstance(data, file)
+        else:
+            is_file = isinstance(data, io.IOBase)
+        if is_file:
             data = data.read()
         start = time.time()
         retry_count = 0
@@ -133,13 +147,13 @@ class Service(object):
             return result['result']
 
     def process_file(self, path, **kwargs):
-        with open(path) as inp:
+        with open(path, 'rb') as inp:
             return self.process(inp.read(), **kwargs)
 
     def process_network_request(self, url, data, timeout):
         if data:
             for key in data.keys():
-                if isinstance(data[key], unicode):
+                if isinstance(data[key], six.text_type):
                     data[key] = data[key].encode('utf-8')
 
             req_data = urlencode(data).encode('utf-8')

@@ -23,7 +23,6 @@ class CommonBackend(BaseServiceBackend):
     def build_task_request(self, data=None, options=None):
         post = {
             'key': self.api_key,
-            'json': '1',
         }
         if data:
             post.update({
@@ -41,21 +40,17 @@ class CommonBackend(BaseServiceBackend):
 
     def parse_task_response(self, res):
         if res['code'] == 200:
-            try:
-                data = json.loads(res['body'].decode('utf-8'))
-            except ValueError:
-                raise InvalidServiceResponse('Service returned non-json response')
+            body = res['body'].decode('utf-8')
+            if body.startswith('OK|'):
+                return {
+                    'task_id': body.split('|', 1)[1]
+                }
+            elif body == 'ERROR_NO_SLOT_AVAILABLE':
+                raise ServiceNotAvailable('Service too busy')
+            elif body == 'ERROR_ZERO_BALANCE':
+                raise ZeroBalance('Balance too low')
             else:
-                if data['status'] == 1:
-                    return {
-                        'task_id': data['request'],
-                    }
-                elif data['request'] == 'ERROR_NO_SLOT_AVAILABLE':
-                    raise ServiceNotAvailable('Service too busy')
-                elif data['request'] == 'ERROR_ZERO_BALANCE':
-                    raise ZeroBalance('Balance too low')
-                else:
-                    raise RemoteServiceError(data['request'])
+                raise RemoteServiceError(body)
         else:
             raise RemoteServiceError('Unexpected HTTP code: %d' % res['code'])
 
@@ -68,7 +63,6 @@ class CommonBackend(BaseServiceBackend):
             'key': self.api_key,
             'action': 'get',
             'id': task_id,
-            'json': '1',
         }
         #if options:
         #    params.update(**options)
@@ -82,17 +76,14 @@ class CommonBackend(BaseServiceBackend):
 
     def parse_result_response(self, res):
         if res['code'] == 200:
-            try:
-                data = json.loads(res['body'].decode('utf-8'))
-            except ValueError:
-                raise InvalidServiceResponse('Service returned non-json response')
-            if data['status'] == 1:
+            body = res['body'].decode('utf-8')
+            if body.startswith('OK|'):
                 return {
-                    'result': data['request'],
+                    'result': body.split('|', 1)[1]
                 }
-            elif data['request'] == b'CAPCHA_NOT_READY':
-                raise ResultNotReady('Solution is not ready')
+            elif body == 'CAPCHA_NOT_READY':
+                raise ResultNotReady('Result is not ready')
             else:
-                raise RemoteServiceError(data['request'])
+                raise RemoteServiceError(body)
         else:
             raise RemoteServiceError('Unexpected HTTP code: %d' % res['code'])
