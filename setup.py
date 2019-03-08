@@ -8,7 +8,7 @@ with open(os.path.join(ROOT, 'README.md')) as inp:
 
 setup(
     name = 'decaptcher',
-    version = '0.0.1',
+    version = '0.0.2',
     author = 'Gregory Petukhov',
     author_email = 'lorien@lorien.name',
     maintainer='Gregory Petukhov',
